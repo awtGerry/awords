@@ -9,7 +9,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
-    let count = create_rw_signal(cx, 0);
+    let timer = create_rw_signal(cx, 0);
 
     view! {
         cx,
@@ -20,7 +20,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Route path="" view=move |cx| view! {
                     cx,
                     <main class="bg-slate-50 h-screen w-screen my-0 mx-auto max-w-3xl text-center">
-                        <Timer signal={count}/>
+                        <Timer signal={timer}/>
                         <input class="border-2 border-black" type="text"
                             on:input=move |ev| {
                                 set_userinput(event_target_value(&ev));
@@ -37,6 +37,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
 /// Timer example, demonstrating the use of `use_interval`.
 /// Get the signal from the parent component (timer, set_timer)
+/// Remove the warning about the never read signal
 #[component]
 fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
 
