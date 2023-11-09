@@ -35,6 +35,8 @@ leptos_actix = { version = "0.1.0", optional = true }
 leptos_meta = { version = "0.1.0", default-features = false }
 leptos_router = { version = "0.1.0", default-features = false }
 proc-macro2 = "1.0.69"
+rand = "0.8.5"
+serde = "1.0.192"
 
 [features]
 default = ["csr"]
