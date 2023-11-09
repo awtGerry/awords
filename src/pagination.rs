@@ -97,7 +97,7 @@ pub fn PaginationBar(cx: Scope, count: usize, signal: RwSignal<usize>) -> impl I
     return view! {cx,
         <div class="border w-full">
             <div class="flex">
-                <PaginationNavButton name={"Prev"} cb=move || {
+                <PaginationNavButton name={"Minus"} cb=move || {
                     signal.update(|x| {
                         *x = x.saturating_sub(1);
                     });
@@ -107,7 +107,7 @@ pub fn PaginationBar(cx: Scope, count: usize, signal: RwSignal<usize>) -> impl I
                         <PaginationBulletList current=signal.get() count=count signal=signal/>
                     };
                 }}
-                <PaginationNavButton name={"Next"} cb=move || {
+                <PaginationNavButton name={"Plus"} cb=move || {
                     signal.update(|x| {
                         if *x + 1 < count {
                             *x = *x + 1;
