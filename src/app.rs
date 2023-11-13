@@ -2,6 +2,7 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 
+// use rand;
 use std::time::Duration;
 
 #[component]
@@ -21,7 +22,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Route path="" view=move |cx| view! {
                     cx,
                     <main class="bg-slate-50 h-screen w-screen my-0 mx-auto max-w-3xl text-center">
-                        <h1 class="text-4xl">"Awords"</h1>
+                        <h1 class="text-4xl">"AWords"</h1>
                         <Timer signal={timer}/>
                         <input class="border-2 border-black" type="text"
                             on:input=move |ev| {
@@ -38,13 +39,13 @@ pub fn App(cx: Scope) -> impl IntoView {
 }
 
 // Get the words from English.txt
-fn get_random_words() -> String {
-    let words = include_str!("../dictionary/English.txt");
-    let mut rng = rand::thread_rng();
-    let mut words = words.lines().choose_multiple(&mut rng, 10);
-    words.sort();
-    words.join(" ")
-}
+// fn get_random_words() -> String {
+//     let words = include_str!("../dictionary/English.txt");
+//     let mut rng = rand::thread_rng();
+//     let mut words = words.lines().choose_multiple(&mut rng, 10);
+//     words.sort();
+//     words.join(" ")
+// }
 
 /// Timer example, demonstrating the use of `use_interval`.
 /// Get the signal from the parent component (timer, set_timer)

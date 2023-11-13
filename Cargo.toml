@@ -19,6 +19,7 @@ crate-type = ["cdylib", "rlib"]
 gloo-net = { version = "0.2", features = ["http"] }
 log = "0.4"
 cfg-if = "1.0"
+# rand = "0.8.5"
 
 # dependecies for client (enable when csr or hydrate set)
 wasm-bindgen = { version = "0.2", optional = true }
@@ -35,8 +36,6 @@ leptos_actix = { version = "0.1.0", optional = true }
 leptos_meta = { version = "0.1.0", default-features = false }
 leptos_router = { version = "0.1.0", default-features = false }
 proc-macro2 = "1.0.69"
-rand = "0.8.5"
-serde = "1.0.192"
 
 [features]
 default = ["csr"]
