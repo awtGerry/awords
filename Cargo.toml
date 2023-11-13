@@ -19,7 +19,7 @@ crate-type = ["cdylib", "rlib"]
 gloo-net = { version = "0.2", features = ["http"] }
 log = "0.4"
 cfg-if = "1.0"
-# rand = "0.8.5"
+getrandom = { version = "0.2.11", features = ["js"] }
 
 # dependecies for client (enable when csr or hydrate set)
 wasm-bindgen = { version = "0.2", optional = true }

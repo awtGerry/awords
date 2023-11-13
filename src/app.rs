@@ -2,14 +2,15 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 
-// use rand;
+use getrandom::getrandom;
 use std::time::Duration;
+
+const WORDS: &str = include_str!("../dictionary/English.txt");
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
-    // let words = get_random_words();
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
     let timer = create_rw_signal(cx, 0);
 
@@ -22,7 +23,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Route path="" view=move |cx| view! {
                     cx,
                     <main class="bg-slate-50 h-screen w-screen my-0 mx-auto max-w-3xl text-center">
-                        <h1 class="text-4xl">"AWords"</h1>
+                        <h1 class="text-4xl">"Awords"</h1>
                         <Timer signal={timer}/>
                         <input class="border-2 border-black" type="text"
                             on:input=move |ev| {
@@ -31,6 +32,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                             prop:value=userinput
                         />
                         <p>{userinput}</p>
+                        // Get the words from English.txt
+                        <p>{get_random_words()}</p>
                     </main>
             }/>
             </Routes>
@@ -39,13 +42,20 @@ pub fn App(cx: Scope) -> impl IntoView {
 }
 
 // Get the words from English.txt
-// fn get_random_words() -> String {
-//     let words = include_str!("../dictionary/English.txt");
-//     let mut rng = rand::thread_rng();
-//     let mut words = words.lines().choose_multiple(&mut rng, 10);
-//     words.sort();
-//     words.join(" ")
-// }
+fn get_random_words() -> String {
+    let words: Vec<&str> = WORDS.split('\n').collect();
+    let mut buf = [0u8; 4];
+    getrandom(&mut buf).unwrap();
+    let mut result = String::new();
+    let max = words.len() - 1;
+    for _ in 0..10 {
+        let index = u32::from_le_bytes(buf) % max as u32;
+        result.push_str(words[index as usize]);
+        result.push(' ');
+        getrandom(&mut buf).unwrap();
+    }
+    result
+}
 
 /// Timer example, demonstrating the use of `use_interval`.
 /// Get the signal from the parent component (timer, set_timer)
