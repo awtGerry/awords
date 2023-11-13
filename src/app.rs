@@ -11,6 +11,7 @@ const WORDS: &str = include_str!("../dictionary/English.txt");
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
+    let random_words = create_rw_signal(cx, get_random_words(40));
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
     let timer = create_rw_signal(cx, 0);
 
@@ -32,8 +33,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                             prop:value=userinput
                         />
                         <p>{userinput}</p>
-                        // Get the words from English.txt
-                        <p>{get_random_words()}</p>
+                        <p>{random_words}</p>
+                        // <p>{get_random_words(20)}</p>
                     </main>
             }/>
             </Routes>
@@ -42,13 +43,13 @@ pub fn App(cx: Scope) -> impl IntoView {
 }
 
 // Get the words from English.txt
-fn get_random_words() -> String {
+fn get_random_words(amount: u16) -> String {
     let words: Vec<&str> = WORDS.split('\n').collect();
     let mut buf = [0u8; 4];
     getrandom(&mut buf).unwrap();
     let mut result = String::new();
     let max = words.len() - 1;
-    for _ in 0..10 {
+    for _ in 0..amount {
         let index = u32::from_le_bytes(buf) % max as u32;
         result.push_str(words[index as usize]);
         result.push(' ');
@@ -65,10 +66,10 @@ fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
 
     use_interval(cx, 1000, move || {
         /* Set the timer to reach 25 and then reset */
-        if signal.get() == 25 {
-            signal.set(0);
+        if signal.get() == 0 {
+            signal.set(30);
         }
-        signal.update(|c| *c = *c + 1);
+        signal.update(|c| *c = *c - 1);
     });
 
     return view! {cx,
