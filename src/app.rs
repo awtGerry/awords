@@ -19,14 +19,14 @@ pub fn App(cx: Scope) -> impl IntoView {
         cx,
         <Stylesheet id="leptos" href="/pkg/tailwind.css"/>
         <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"/>
-        <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
+        <Link rel="shortcut icon" type_="image/ico" href="/logo.ico"/>
         <Router>
             <Routes>
                 <Route path="" view=move |cx| view! {
                     cx,
                     <main class="bg-aw-bg h-screen w-full my-0 mx-auto text-center">
                         <p class="">"."</p>
-                        <h1 class="text-6xl font-pacifico text-aw-green mt-0">"AWORDS"</h1>
+                        <h1 class="text-6xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
                         <Timer signal={timer}/>
                         <input class="opacity-0 absolute -z-1" type="text" autofocus
                             on:input=move |ev| {
@@ -34,10 +34,10 @@ pub fn App(cx: Scope) -> impl IntoView {
                             }
                             prop:value=userinput
                         />
-                        // <p class="text-aw-fg">{userinput}</p>
                         <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-center">
                             {random_words}
                         </p>
+                        <p class="text-aw-fg">{userinput}</p>
                     </main>
             }/>
             </Routes>
