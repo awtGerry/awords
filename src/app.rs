@@ -28,14 +28,14 @@ pub fn App(cx: Scope) -> impl IntoView {
                         <p class="">"."</p>
                         <h1 class="text-6xl font-pacifico text-aw-green mt-0">"AWORDS"</h1>
                         <Timer signal={timer}/>
-                        <input class="border-2 border-black opacity-0 absolute -z-1" type="text" autofocus
+                        <input class="opacity-0 absolute -z-1" type="text" autofocus
                             on:input=move |ev| {
                                 set_userinput(event_target_value(&ev));
                             }
                             prop:value=userinput
                         />
-                        <p class="text-aw-fg">{userinput}</p>
-                        <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-12 text-center">
+                        // <p class="text-aw-fg">{userinput}</p>
+                        <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-center">
                             {random_words}
                         </p>
                     </main>
@@ -61,9 +61,6 @@ fn get_random_words(amount: u16) -> String {
     result
 }
 
-/// Timer example, demonstrating the use of `use_interval`.
-/// Get the signal from the parent component (timer, set_timer)
-/// Remove the warning about the never read signal
 #[component]
 fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
 
@@ -76,8 +73,11 @@ fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
     });
 
     return view! {cx,
-        <div>
-            <div>"Counter: "{signal}</div>
+        <div class="mt-20">
+            <div class="flex items-center justify-center">
+                <img src="/clock.svg" class="w-12 h-12"/>
+                <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{signal}</h1>
+            </div>
         </div>
     }
 }
