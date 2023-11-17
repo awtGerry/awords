@@ -27,16 +27,20 @@ pub fn App(cx: Scope) -> impl IntoView {
                     <main class="bg-aw-bg h-screen w-full my-0 mx-auto text-center">
                         <p class="">"."</p>
                         <h1 class="text-6xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
-                        <Timer signal={timer}/>
                         <input class="opacity-0 absolute -z-1" type="text" autofocus
                             on:input=move |ev| {
                                 set_userinput(event_target_value(&ev));
                             }
                             prop:value=userinput
                         />
-                        <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-center">
-                            {random_words}
-                        </p>
+                        <div>
+                            <div class="mt-20">
+                                <Timer signal={timer}/>
+                            </div>
+                            <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-center">
+                                {random_words}
+                            </p>
+                        </div>
                         <p class="text-aw-fg">{userinput}</p>
                     </main>
             }/>
@@ -61,6 +65,15 @@ fn get_random_words(amount: u16) -> String {
     result
 }
 
+/* Check the input with the string, if the user input is right paint the
+   current string to green, else to red.
+*/
+// #[component]
+// fn check_string(cx: Scope, usr: String, dic: String, signal: RwSignal<usize>) -> impl IntoView {
+//     return view! { cx,
+//     }
+// }
+
 #[component]
 fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
 
@@ -73,11 +86,9 @@ fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
     });
 
     return view! {cx,
-        <div class="mt-20">
-            <div class="flex items-center justify-center">
-                <img src="/clock.svg" class="w-12 h-12"/>
-                <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{signal}</h1>
-            </div>
+        <div class="flex items-center justify-center">
+            <img src="/clock.svg" class="w-12 h-12"/>
+            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{signal}</h1>
         </div>
     }
 }
