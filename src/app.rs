@@ -15,11 +15,6 @@ pub fn App(cx: Scope) -> impl IntoView {
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
     let timer = create_rw_signal(cx, 0);
 
-    let vec_words = random_words.get().split(' ').collect::<Vec<&str>>();
-    let vec_input = userinput.get().split(' ').collect::<Vec<&str>>();
-
-    let msg = String::new();
-
     view! {
         cx,
         <Stylesheet id="leptos" href="/pkg/tailwind.css"/>
@@ -38,14 +33,24 @@ pub fn App(cx: Scope) -> impl IntoView {
                             }
                             prop:value=userinput
                         />
-                        <div class="flex mt-20 justify-center align-center">
-                            <div class="flex-start">
-                                <Timer signal={timer}/>
-                            </div>
-                            <div class="mt-12">
-                                <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-justify">
-                                    {random_words}
-                                </p>
+                        // <div class="flex mt-20 justify-center align-center">
+                        <div class="flex flex-col mt-20 items-center">
+                            /* TIMER */
+                            <Timer signal={timer}/>
+                            /* RANDOM WORDS */
+                            <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-8 text-justify">
+                                {random_words}
+                            </p>
+                            /* RESTART BUTTON */
+                            // <button class="bg-aw-green text-aw-bg font-bold text-2xl px-4 py-2 rounded-lg"
+                            <div class="cursor-pointer"
+                                on:click=move |_| {
+                                    random_words.set(get_random_words(40));
+                                    set_userinput("".to_string());
+                                    timer.set(30);
+                                }
+                            >
+                                <img src="/refresh.svg" class="w-12 h-12"/>
                             </div>
                         </div>
                         <p class="text-aw-fg">{userinput}</p>
@@ -55,18 +60,6 @@ pub fn App(cx: Scope) -> impl IntoView {
         </Router>
     }
 }
-
-// fn is_equal(input: &str, words: Vec<&str>) -> bool {
-//     if vec1.len() != vec2.len() {
-//         return false;
-//     }
-//     for i in 0..vec1.len() {
-//         if vec1[i] != vec2[i] {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
 
 // Get the words from English.txt
 fn get_random_words(amount: u16) -> String {
@@ -105,7 +98,7 @@ fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
     });
 
     return view! {cx,
-        <div class="flex items-center justify-center">
+        <div class="flex">
             <img src="/clock.svg" class="w-12 h-12"/>
             <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{signal}</h1>
         </div>
