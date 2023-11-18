@@ -15,6 +15,11 @@ pub fn App(cx: Scope) -> impl IntoView {
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
     let timer = create_rw_signal(cx, 0);
 
+    let vec_words = random_words.get().split(' ').collect::<Vec<&str>>();
+    let vec_input = userinput.get().split(' ').collect::<Vec<&str>>();
+
+    let msg = String::new();
+
     view! {
         cx,
         <Stylesheet id="leptos" href="/pkg/tailwind.css"/>
@@ -26,20 +31,22 @@ pub fn App(cx: Scope) -> impl IntoView {
                     cx,
                     <main class="bg-aw-bg h-screen w-full my-0 mx-auto text-center">
                         <p class="">"."</p>
-                        <h1 class="text-6xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
+                        <h1 class="text-4xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
                         <input class="opacity-0 absolute -z-1" type="text" autofocus
                             on:input=move |ev| {
                                 set_userinput(event_target_value(&ev));
                             }
                             prop:value=userinput
                         />
-                        <div>
-                            <div class="mt-20">
+                        <div class="flex mt-20 justify-center align-center">
+                            <div class="flex-start">
                                 <Timer signal={timer}/>
                             </div>
-                            <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-center">
-                                {random_words}
-                            </p>
+                            <div class="mt-12">
+                                <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-4 text-justify">
+                                    {random_words}
+                                </p>
+                            </div>
                         </div>
                         <p class="text-aw-fg">{userinput}</p>
                     </main>
@@ -48,6 +55,18 @@ pub fn App(cx: Scope) -> impl IntoView {
         </Router>
     }
 }
+
+// fn is_equal(input: &str, words: Vec<&str>) -> bool {
+//     if vec1.len() != vec2.len() {
+//         return false;
+//     }
+//     for i in 0..vec1.len() {
+//         if vec1[i] != vec2[i] {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
 
 // Get the words from English.txt
 fn get_random_words(amount: u16) -> String {
