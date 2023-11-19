@@ -13,7 +13,12 @@ pub fn App(cx: Scope) -> impl IntoView {
 
     let random_words = create_rw_signal(cx, get_random_words(40));
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
-    let timer = create_rw_signal(cx, 0);
+    let timer = create_rw_signal(cx, 30);
+    let start = create_rw_signal(cx, false);
+
+    // let tiempo = move || if start.get() {
+    //     view! { <Timer signal={timer}/> }
+    // };
 
     view! {
         cx,
@@ -30,13 +35,39 @@ pub fn App(cx: Scope) -> impl IntoView {
                         <input class="opacity-0 absolute -z-1" type="text" autofocus
                             on:input=move |ev| {
                                 set_userinput(event_target_value(&ev));
+                                if !start.get() {
+                                    start.set(true);
+                                }
                             }
                             prop:value=userinput
                         />
-                        // <div class="flex mt-20 justify-center align-center">
                         <div class="flex flex-col mt-20 items-center">
                             /* TIMER */
-                            <Timer signal={timer}/>
+                            <div>
+                            {move || {
+                                if start.get() {
+                                    use_interval(cx, 1000, move || {
+                                        // if timer.get() == 0 {
+                                        //     timer.set(30);
+                                        // }
+                                        timer.update(|c| *c = *c - 1);
+                                    });
+                                    view! {cx,
+                                        <div class="flex">
+                                            <img src="/clock.svg" class="w-12 h-12"/>
+                                            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
+                                        </div>
+                                    }
+                                } else {
+                                    view! {cx,
+                                        <div class="flex">
+                                            <img src="/clock.svg" class="w-12 h-12"/>
+                                            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">"30"</h1>
+                                        </div>
+                                    }
+                                }
+                            }}
+                            </div>
                             /* RANDOM WORDS */
                             <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-8 text-justify">
                                 {random_words}
@@ -88,9 +119,7 @@ fn get_random_words(amount: u16) -> String {
 
 #[component]
 fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
-
     use_interval(cx, 1000, move || {
-        /* Set the timer to reach 25 and then reset */
         if signal.get() == 0 {
             signal.set(30);
         }
