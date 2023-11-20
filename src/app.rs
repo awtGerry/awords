@@ -5,6 +5,7 @@ use leptos_router::*;
 use getrandom::getrandom;
 use std::time::Duration;
 
+#[allow(unused)]
 const WORDS: &str = include_str!("../dictionary/English.txt");
 
 #[component]
@@ -16,9 +17,8 @@ pub fn App(cx: Scope) -> impl IntoView {
     let timer = create_rw_signal(cx, 30);
     let start = create_rw_signal(cx, false);
 
-    // let tiempo = move || if start.get() {
-    //     view! { <Timer signal={timer}/> }
-    // };
+    /* Split the random words into a vector */
+    // let vec_random_words: Vec<&str> = random_words.get().split(' ').collect();
 
     view! {
         cx,
@@ -32,24 +32,19 @@ pub fn App(cx: Scope) -> impl IntoView {
                     <main class="bg-aw-bg h-screen w-full my-0 mx-auto text-center">
                         <p class="">"."</p>
                         <h1 class="text-4xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
-                        <input class="opacity-0 absolute -z-1" type="text" autofocus
-                            on:input=move |ev| {
-                                set_userinput(event_target_value(&ev));
-                                if !start.get() {
-                                    start.set(true);
-                                }
-                            }
-                            prop:value=userinput
-                        />
                         <div class="flex flex-col mt-20 items-center">
                             /* TIMER */
                             <div>
                             {move || {
                                 if start.get() {
                                     use_interval(cx, 1000, move || {
-                                        // if timer.get() == 0 {
-                                        //     timer.set(30);
-                                        // }
+                                        /* TODO: Deal with this later */
+                                        /* It shoud save the wpm of the user in the db */
+                                        if timer.get() <= 0 {
+                                            timer.set(30);
+                                            start.set(false);
+                                            set_userinput("".to_string());
+                                        }
                                         timer.update(|c| *c = *c - 1);
                                     });
                                     view! {cx,
@@ -62,14 +57,14 @@ pub fn App(cx: Scope) -> impl IntoView {
                                     view! {cx,
                                         <div class="flex">
                                             <img src="/clock.svg" class="w-12 h-12"/>
-                                            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">"30"</h1>
+                                            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
                                         </div>
                                     }
                                 }
                             }}
                             </div>
                             /* RANDOM WORDS */
-                            <p class="text-aw-fg font-mono text-2xl max-w-3xl mx-auto my-8 text-justify">
+                            <p class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
                                 {random_words}
                             </p>
                             /* RESTART BUTTON */
@@ -84,7 +79,39 @@ pub fn App(cx: Scope) -> impl IntoView {
                                 <img src="/refresh.svg" class="w-12 h-12"/>
                             </div>
                         </div>
-                        <p class="text-aw-fg">{userinput}</p>
+                        <input class="opacity-0 absolute -z-1" type="text" autofocus
+                            on:input=move |ev| {
+                                /* Set the user input */
+                                set_userinput(event_target_value(&ev));
+                                /* Start the timer when the user starts typing */
+                                if userinput.get() != "" && !start.get() {
+                                    start.set(true);
+                                }
+                            }
+                            prop:value=userinput
+                        />
+                        { move || {
+                            let random_words_chars: Vec<char> = random_words.get().chars().collect();
+                            let userinput_chars: Vec<char> = userinput.get().chars().collect();
+
+                            // Check if the user input char is equal to the random words char
+                            // if it is, then change the color of the char to green
+                            // if it isn't, then change the color of the char to red
+
+                            let mut result = String::new();
+                            for i in 0..userinput_chars.len() {
+                                if userinput_chars[i] == random_words_chars[i] {
+                                    result.push_str(&userinput_chars[i].to_string());
+                                } else {
+                                    result.push_str(&format!("<span class=\"text-aw-red\">{}</span>", userinput_chars[i]));
+                                }
+                            }
+                            view! {cx,
+                                <p class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
+                                    {result}
+                                </p>
+                            }
+                        }}
                     </main>
             }/>
             </Routes>
@@ -106,32 +133,6 @@ fn get_random_words(amount: u16) -> String {
         getrandom(&mut buf).unwrap();
     }
     result
-}
-
-/* Check the input with the string, if the user input is right paint the
-   current string to green, else to red.
-*/
-// #[component]
-// fn check_string(cx: Scope, usr: String, dic: String, signal: RwSignal<usize>) -> impl IntoView {
-//     return view! { cx,
-//     }
-// }
-
-#[component]
-fn Timer(cx: Scope, signal: RwSignal<usize>) -> impl IntoView {
-    use_interval(cx, 1000, move || {
-        if signal.get() == 0 {
-            signal.set(30);
-        }
-        signal.update(|c| *c = *c - 1);
-    });
-
-    return view! {cx,
-        <div class="flex">
-            <img src="/clock.svg" class="w-12 h-12"/>
-            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{signal}</h1>
-        </div>
-    }
 }
 
 fn use_interval<T, F>(cx: Scope, interval_millis: T, f: F)
