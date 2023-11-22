@@ -1,14 +1,14 @@
 mod app;
-pub mod pagination;
-pub mod timer;
+// pub mod pagination;
+// pub mod timer;
 use cfg_if::cfg_if;
 
 cfg_if! {
     if #[cfg(feature = "hydrate")] {
         use wasm_bindgen::prelude::wasm_bindgen;
         use crate::app::*;
-        use crate::pagination::*;
-        use crate::timer::*;
+        // use crate::pagination::*;
+        // use crate::timer::*;
         use leptos::*;
 
         #[wasm_bindgen]

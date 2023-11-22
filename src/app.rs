@@ -136,7 +136,7 @@ pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
                 });
                 view! {cx,
                     <div class="flex">
-                        <img src="/clock.svg" class="w-12 h-12"/>
+                        <img src="/home/gerry/awesometimes/projects/awords/public/clock.svg" class="w-12 h-12"/>
                         <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
                     </div>
                 }
