@@ -589,14 +589,6 @@ video {
   width: 100%;
 }
 
-.max-w-3xl {
-  max-width: 48rem;
-}
-
-.max-w-xl {
-  max-width: 36rem;
-}
-
 .max-w-4xl {
   max-width: 56rem;
 }
@@ -693,11 +685,6 @@ video {
 .text-aw-green-light {
   --tw-text-opacity: 1;
   color: rgb(186 228 172 / var(--tw-text-opacity));
-}
-
-.text-aw-error {
-  --tw-text-opacity: 1;
-  color: rgb(255 123 114 / var(--tw-text-opacity));
 }
 
 .opacity-0 {

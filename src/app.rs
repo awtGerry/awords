@@ -2,8 +2,9 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 
+use crate::timer::Timer;
+
 use getrandom::getrandom;
-use std::time::Duration;
 
 #[allow(unused)]
 const WORDS: &str = include_str!("../dictionary/English.txt");
@@ -14,6 +15,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
     let random_words = create_rw_signal(cx, get_random_words(40));
     let (userinput, set_userinput) = create_signal(cx, "".to_string());
+
     let timer = create_rw_signal(cx, 30);
     let start = create_rw_signal(cx, false);
 
@@ -34,39 +36,12 @@ pub fn App(cx: Scope) -> impl IntoView {
                         <h1 class="text-4xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
                         <div class="flex flex-col mt-20 items-center">
                             /* TIMER */
-                            <div>
-                            {move || {
-                                if start.get() {
-                                    use_interval(cx, 1000, move || {
-                                        /* TODO: Deal with this later */
-                                        /* It shoud save the wpm of the user in the db */
-                                        if timer.get() <= 0 {
-                                            timer.set(30);
-                                            start.set(false);
-                                            set_userinput("".to_string());
-                                        }
-                                        timer.update(|c| *c = *c - 1);
-                                    });
-                                    view! {cx,
-                                        <div class="flex">
-                                            <img src="/clock.svg" class="w-12 h-12"/>
-                                            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
-                                        </div>
-                                    }
-                                } else {
-                                    view! {cx,
-                                        <div class="flex">
-                                            <img src="/clock.svg" class="w-12 h-12"/>
-                                            <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
-                                        </div>
-                                    }
-                                }
-                            }}
-                            </div>
+                            <Timer signal={start} timer={timer}/>
                             /* RANDOM WORDS */
                             <p class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
                                 {random_words}
                             </p>
+
                             /* RESTART BUTTON */
                             // <button class="bg-aw-green text-aw-bg font-bold text-2xl px-4 py-2 rounded-lg"
                             <div class="cursor-pointer"
@@ -79,6 +54,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                                 <img src="/refresh.svg" class="w-12 h-12"/>
                             </div>
                         </div>
+
+                        /* USER INPUT */
                         <input class="opacity-0 absolute -z-1" type="text" autofocus
                             on:input=move |ev| {
                                 /* Set the user input */
@@ -90,6 +67,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                             }
                             prop:value=userinput
                         />
+
+                        /* USER INPUT CHECKOUT */
                         { move || {
                             let random_words_chars: Vec<char> = random_words.get().chars().collect();
                             let userinput_chars: Vec<char> = userinput.get().chars().collect();
@@ -120,6 +99,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 }
 
 // Get the words from English.txt
+#[allow(unused)]
 fn get_random_words(amount: u16) -> String {
     let words: Vec<&str> = WORDS.split('\n').collect();
     let mut buf = [0u8; 4];
@@ -135,23 +115,3 @@ fn get_random_words(amount: u16) -> String {
     result
 }
 
-fn use_interval<T, F>(cx: Scope, interval_millis: T, f: F)
-where
-    F: Fn() + Clone + 'static,
-    T: Into<MaybeSignal<u64>> + 'static,
-{
-    let interval_millis = interval_millis.into();
-    create_effect(cx, move |prev_handle: Option<IntervalHandle>| {
-        if let Some(prev_handle) = prev_handle {
-            prev_handle.clear();
-        };
-
-        set_interval(
-            f.clone(),
-            // this is the only reactive access, so this effect will only
-            // re-run when the interval changes
-            Duration::from_millis(interval_millis.get()),
-        )
-        .expect("could not create interval")
-    });
-}
