@@ -66,7 +66,7 @@ affect
 afford
 afraid
 african
-african-American
+african-american
 after
 afternoon
 again
@@ -84,7 +84,7 @@ ah
 ahead
 aid
 aide
-aIDS
+aids
 aim
 air
 aircraft
@@ -106,7 +106,7 @@ alter
 alternative
 although
 always
-aM
+am
 amazing
 american
 among
@@ -409,7 +409,7 @@ cell
 center
 central
 century
-cEO
+ceo
 ceremony
 certain
 certainly
@@ -797,7 +797,7 @@ diversity
 divide
 division
 divorce
-dNA
+dna
 do
 doctor
 document
@@ -1903,7 +1903,7 @@ pattern
 pause
 pay
 payment
-pC
+pc
 peace
 peak
 peer
@@ -1969,7 +1969,7 @@ pleasure
 plenty
 plot
 plus
-pM
+pm
 pocket
 poem
 poet
@@ -2791,7 +2791,7 @@ try
 tube
 tunnel
 turn
-tV
+tv
 twelve
 twenty
 twice
