@@ -20,9 +20,6 @@ pub fn App(cx: Scope) -> impl IntoView {
     let timer = create_rw_signal(cx, 30);
     let start = create_rw_signal(cx, false);
 
-    /* Split the random words into a vector */
-    // let vec_random_words: Vec<&str> = random_words.get().split(' ').collect();
-
     view! {
         cx,
         <Stylesheet id="leptos" href="/pkg/tailwind.css"/>
@@ -73,23 +70,28 @@ pub fn App(cx: Scope) -> impl IntoView {
                         { move || {
                             let random_words_chars: Vec<char> = random_words.get().chars().collect();
                             let userinput_chars: Vec<char> = userinput.get().chars().collect();
-
-                            // Check if the user input char is equal to the random words char
-                            // if it is, then change the color of the char to green
-                            // if it isn't, then change the color of the char to red
-
-                            let mut result = String::new();
+                            let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
                             for i in 0..userinput_chars.len() {
-                                if userinput_chars[i] == random_words_chars[i] {
-                                    result.push_str(&userinput_chars[i].to_string());
+                                if !(userinput_chars[i] == random_words_chars[i]) {
+                                    // typo = true;
+                                    result.update(|c| c.push((userinput_chars[i], true)));
                                 } else {
-                                    result.push_str(&format!("<span class=\"text-aw-red\">{}</span>", userinput_chars[i]));
+                                    // typo = false;
+                                    result.update(|c| c.push((userinput_chars[i], false)));
                                 }
                             }
                             view! {cx,
-                                <p class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
-                                    {result}
-                                </p>
+                                <For
+                                    each=result
+                                    key=|i| match i {
+                                        _ => "other",
+                                    }
+                                    view=move |i| view! {cx,
+                                        <div class={if i.1 { "text-aw-red" } else { "text-aw-green" }}>
+                                            {i.0}
+                                        </div>
+                                    }
+                                />
                             }
                         }}
                     </main>
@@ -136,7 +138,7 @@ pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
                 });
                 view! {cx,
                     <div class="flex">
-                        <img src="/home/gerry/awesometimes/projects/awords/public/clock.svg" class="w-12 h-12"/>
+                        <img src="/clock.svg" class="w-12 h-12"/>
                         <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
                     </div>
                 }
@@ -174,3 +176,38 @@ where
         .expect("could not create interval")
     });
 }
+
+/* #[component]
+fn Example(cx: Scope, random_words: RwSignal<String>, userinput: ReadSignal<String>) -> impl IntoView {
+    let random_words_chars: Vec<char> = random_words.get().chars().collect();
+    let userinput_chars: Vec<char> = userinput.get().chars().collect();
+    return view! {cx,
+        <div>
+        {move || {
+            let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
+            for i in 0..userinput_chars.len() {
+                if !(userinput_chars[i] == random_words_chars[i]) {
+                    // typo = true;
+                    result.update(|c| c.push((userinput_chars[i], true)));
+                } else {
+                    // typo = false;
+                    result.update(|c| c.push((userinput_chars[i], false)));
+                }
+            }
+            view! {cx,
+                <For
+                    each=result
+                    key=|i| match i {
+                        _ => "other",
+                    }
+                    view=move |i| view! {cx,
+                        <div class={if i.1 { "text-aw-red" } else { "text-aw-green" }}>
+                            {i}
+                        </div>
+                    }
+                />
+            }
+        }}
+        </div>
+    }
+} */

@@ -15,7 +15,7 @@ module.exports = {
           'aw-green': '#C5EE4F',
           'aw-green-light': '#BAE4AC',
           'aw-green-dark': '#56704C',
-          'aw-error': '#FF7B72',
+          'aw-red': '#FF7B72',
         },
       },
     },
