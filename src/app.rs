@@ -73,25 +73,27 @@ pub fn App(cx: Scope) -> impl IntoView {
                             let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
                             for i in 0..userinput_chars.len() {
                                 if !(userinput_chars[i] == random_words_chars[i]) {
-                                    // typo = true;
+                                    // has typo
                                     result.update(|c| c.push((userinput_chars[i], true)));
                                 } else {
-                                    // typo = false;
+                                    // is correct
                                     result.update(|c| c.push((userinput_chars[i], false)));
                                 }
                             }
                             view! {cx,
+                                <div class="flex flex-row font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
                                 <For
                                     each=result
-                                    key=|i| match i {
-                                        _ => "other",
+                                    key=|word| match word {
+                                        _ => "",
                                     }
-                                    view=move |i| view! {cx,
-                                        <div class={if i.1 { "text-aw-red" } else { "text-aw-green" }}>
-                                            {i.0}
-                                        </div>
+                                    view=move |cc| view! {cx,
+                                        <p class={if cc.1 { "text-aw-red" } else { "text-aw-green" }}>
+                                            {if cc.0 == ' ' { '·' } else { cc.0 }}
+                                        </p>
                                     }
                                 />
+                                </div>
                             }
                         }}
                     </main>
