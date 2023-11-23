@@ -35,10 +35,51 @@ pub fn App(cx: Scope) -> impl IntoView {
                         <div class="flex flex-col mt-20 items-center">
                             /* TIMER */
                             <Timer signal={start} timer={timer}/>
-                            /* RANDOM WORDS */
-                            <p class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
-                                {random_words}
-                            </p>
+                            /* USER INPUT CHECKOUT */
+                            { move || {
+                                let binding = random_words.clone().get();
+                                let random_words_by_space: Vec<&str> = binding.split(' ').collect();
+                                // let random_words_chars: Vec<char> = random_words.clone().get().chars().collect();
+                                /* let userinput_chars: Vec<char> = userinput.get().chars().collect();
+                                let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
+                                for i in 0..userinput_chars.len() {
+                                    if !(userinput_chars[i] == random_words_chars[i]) {
+                                        // has typo
+                                        result.update(|c| c.push((userinput_chars[i], true)));
+                                    } else {
+                                        // is correct
+                                        result.update(|c| c.push((userinput_chars[i], false)));
+                                    }
+                                } */
+                                view! {cx,
+                                    <div class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify whitespace-normal">
+                                        <div class="flex flex-row whitespace-normal">
+                                            {random_words_by_space.into_iter()
+                                                .map(|c| view! {cx,
+                                                    <p>
+                                                        {c.to_string()}
+                                                        "&nbsp;"
+                                                    </p>
+                                                })
+                                                .collect::<Vec<_>>()
+                                            }
+                                        /* <For
+                                            each=random_words_signal
+                                            key=|word| match word {
+                                                _ => "",
+                                            }
+                                            view=move |cc| view! {cx,
+                                                <p class={if is_active {
+                                                }}>
+                                                <p class="text-aw-fg">
+                                                    {if cc == ' ' { "&nbsp;".to_string() } else { cc.to_string() }}
+                                                </p>
+                                            }
+                                        /> */
+                                        </div>
+                                    </div>
+                                }
+                            }}
 
                             /* RESTART BUTTON */
                             // <button class="bg-aw-green text-aw-bg font-bold text-2xl px-4 py-2 rounded-lg"
@@ -66,36 +107,6 @@ pub fn App(cx: Scope) -> impl IntoView {
                             prop:value=userinput
                         />
 
-                        /* USER INPUT CHECKOUT */
-                        { move || {
-                            let random_words_chars: Vec<char> = random_words.get().chars().collect();
-                            let userinput_chars: Vec<char> = userinput.get().chars().collect();
-                            let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
-                            for i in 0..userinput_chars.len() {
-                                if !(userinput_chars[i] == random_words_chars[i]) {
-                                    // has typo
-                                    result.update(|c| c.push((userinput_chars[i], true)));
-                                } else {
-                                    // is correct
-                                    result.update(|c| c.push((userinput_chars[i], false)));
-                                }
-                            }
-                            view! {cx,
-                                <div class="flex flex-row font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
-                                <For
-                                    each=result
-                                    key=|word| match word {
-                                        _ => "",
-                                    }
-                                    view=move |cc| view! {cx,
-                                        <p class={if cc.1 { "text-aw-red" } else { "text-aw-green" }}>
-                                            {if cc.0 == ' ' { '·' } else { cc.0 }}
-                                        </p>
-                                    }
-                                />
-                                </div>
-                            }
-                        }}
                     </main>
             }/>
             </Routes>
@@ -178,38 +189,3 @@ where
         .expect("could not create interval")
     });
 }
-
-/* #[component]
-fn Example(cx: Scope, random_words: RwSignal<String>, userinput: ReadSignal<String>) -> impl IntoView {
-    let random_words_chars: Vec<char> = random_words.get().chars().collect();
-    let userinput_chars: Vec<char> = userinput.get().chars().collect();
-    return view! {cx,
-        <div>
-        {move || {
-            let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
-            for i in 0..userinput_chars.len() {
-                if !(userinput_chars[i] == random_words_chars[i]) {
-                    // typo = true;
-                    result.update(|c| c.push((userinput_chars[i], true)));
-                } else {
-                    // typo = false;
-                    result.update(|c| c.push((userinput_chars[i], false)));
-                }
-            }
-            view! {cx,
-                <For
-                    each=result
-                    key=|i| match i {
-                        _ => "other",
-                    }
-                    view=move |i| view! {cx,
-                        <div class={if i.1 { "text-aw-red" } else { "text-aw-green" }}>
-                            {i}
-                        </div>
-                    }
-                />
-            }
-        }}
-        </div>
-    }
-} */

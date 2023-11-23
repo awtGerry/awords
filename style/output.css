@@ -613,6 +613,10 @@ video {
   align-self: stretch;
 }
 
+.whitespace-normal {
+  white-space: normal;
+}
+
 .rounded-lg {
   border-radius: 0.5rem;
 }
