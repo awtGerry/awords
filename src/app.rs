@@ -15,7 +15,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
     let random_words = create_rw_signal(cx, get_random_words(40));
-    let (userinput, set_userinput) = create_signal(cx, "".to_string());
+    let userinput = create_rw_signal(cx, "".to_string());
 
     let timer = create_rw_signal(cx, 30);
     let start = create_rw_signal(cx, false);
@@ -34,48 +34,48 @@ pub fn App(cx: Scope) -> impl IntoView {
                         <h1 class="text-4xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
                         <div class="flex flex-col mt-20 items-center">
                             /* TIMER */
-                            <Timer signal={start} timer={timer}/>
+                            <Timer signal={start} timer={timer} userinput={userinput}/>
+                            /* USER INPUT */
+                            <input class="opacity-0 absolute -z-1" type="text" autofocus
+                                on:input=move |ev| {
+                                    /* Set the user input */
+                                    userinput.update(|c| *c = event_target_value(&ev));
+                                    /* Start the timer when the user starts typing */
+                                    if userinput.get() != "" && !start.get() {
+                                        start.set(true);
+                                    }
+                                }
+                                prop:value=userinput
+                            />
+                            /* RANDOM WORDS PREVIEW */
+                            <p class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify">
+                                {random_words}
+                            </p>
                             /* USER INPUT CHECKOUT */
                             { move || {
                                 let binding = random_words.clone().get();
+                                let binding_ui = userinput.clone().get();
                                 let random_words_by_space: Vec<&str> = binding.split(' ').collect();
-                                // let random_words_chars: Vec<char> = random_words.clone().get().chars().collect();
-                                /* let userinput_chars: Vec<char> = userinput.get().chars().collect();
-                                let result = create_rw_signal::<Vec<(char, bool)>>(cx, Vec::new());
-                                for i in 0..userinput_chars.len() {
-                                    if !(userinput_chars[i] == random_words_chars[i]) {
-                                        // has typo
-                                        result.update(|c| c.push((userinput_chars[i], true)));
-                                    } else {
-                                        // is correct
-                                        result.update(|c| c.push((userinput_chars[i], false)));
-                                    }
-                                } */
+                                let userinput_by_space: Vec<&str> = binding_ui.split(' ').collect();
                                 view! {cx,
-                                    <div class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8 text-justify whitespace-normal">
-                                        <div class="flex flex-row whitespace-normal">
-                                            {random_words_by_space.into_iter()
-                                                .map(|c| view! {cx,
-                                                    <p>
-                                                        {c.to_string()}
-                                                        "&nbsp;"
-                                                    </p>
+                                    <div class="text-aw-fg font-mono text-2xl max-w-4xl mx-auto my-8">
+                                        <div class="flex flex-row flex-wrap whitespace-normal text-justify">
+                                            {random_words_by_space.into_iter().zip(userinput_by_space.into_iter())
+                                                .map(|(rw, uw)| view! {cx,
+                                                    // Get the word character by character
+                                                    <div class="mr-2">
+                                                        {rw.chars().zip(uw.chars())
+                                                            .map(|(rc, uc)| view! {cx,
+                                                                // If the character is the same, then it's green
+                                                                // If the character is different, then it's red
+                                                                <span class={if rc == uc {"text-aw-green"} else {"text-aw-red"}}>{uc}</span>
+                                                            })
+                                                            .collect::<Vec<_>>()
+                                                        }
+                                                    </div>
                                                 })
                                                 .collect::<Vec<_>>()
                                             }
-                                        /* <For
-                                            each=random_words_signal
-                                            key=|word| match word {
-                                                _ => "",
-                                            }
-                                            view=move |cc| view! {cx,
-                                                <p class={if is_active {
-                                                }}>
-                                                <p class="text-aw-fg">
-                                                    {if cc == ' ' { "&nbsp;".to_string() } else { cc.to_string() }}
-                                                </p>
-                                            }
-                                        /> */
                                         </div>
                                     </div>
                                 }
@@ -86,27 +86,13 @@ pub fn App(cx: Scope) -> impl IntoView {
                             <div class="cursor-pointer"
                                 on:click=move |_| {
                                     random_words.set(get_random_words(40));
-                                    set_userinput("".to_string());
+                                    userinput.update(|c| *c = "".to_string());
                                     timer.set(30);
                                 }
                             >
                                 <img src="/refresh.svg" class="w-12 h-12"/>
                             </div>
                         </div>
-
-                        /* USER INPUT */
-                        <input class="opacity-0 absolute -z-1" type="text" autofocus
-                            on:input=move |ev| {
-                                /* Set the user input */
-                                set_userinput(event_target_value(&ev));
-                                /* Start the timer when the user starts typing */
-                                if userinput.get() != "" && !start.get() {
-                                    start.set(true);
-                                }
-                            }
-                            prop:value=userinput
-                        />
-
                     </main>
             }/>
             </Routes>
@@ -132,7 +118,7 @@ fn get_random_words(amount: u16) -> String {
 }
 
 #[component]
-pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
+pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>, userinput: RwSignal<String>)
     -> impl IntoView
 {
     return view! {cx,
@@ -144,8 +130,8 @@ pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
                     /* It shoud save the wpm of the user in the db */
                     if timer.get() <= 0 {
                         timer.set(30);
-                        signal.set(false);
-                        // set_userinput("".to_string());
+                        // signal.set(false);
+                        userinput.update(|c| *c = "".to_string());
                     }
                     timer.update(|c| *c = *c - 1);
                 });
