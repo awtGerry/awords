@@ -1,10 +1,11 @@
 use leptos::*;
 use std::time::Duration;
 
+#[allow(unused)]
 #[component]
-pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
-    -> impl IntoView
-{
+pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>, userinput: RwSignal<String>)
+-> impl IntoView {
+    let msg = create_rw_signal(cx, "".to_string());
     return view! {cx,
         <div>
         {move || {
@@ -13,9 +14,10 @@ pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
                     /* TODO: Deal with this later */
                     /* It shoud save the wpm of the user in the db */
                     if timer.get() <= 0 {
-                        timer.set(30);
                         signal.set(false);
-                        // set_userinput("".to_string());
+                        timer.set(30);
+                        msg.update(|c| *c = format!("{} wpm", userinput.get().len() / 5));
+                        userinput.update(|c| *c = "".to_string());
                     }
                     timer.update(|c| *c = *c - 1);
                 });
@@ -23,6 +25,7 @@ pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
                     <div class="flex">
                         <img src="/clock.svg" class="w-12 h-12"/>
                         <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
+                        <span class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{msg}</span>
                     </div>
                 }
             } else {
@@ -30,6 +33,7 @@ pub fn Timer(cx: Scope, signal: RwSignal<bool>, timer: RwSignal<usize>)
                     <div class="flex">
                         <img src="/clock.svg" class="w-12 h-12"/>
                         <h1 class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{timer}</h1>
+                        <span class="text-aw-green-light ml-2 text-4xl text-bold font-pacifico self-stretch">{msg}</span>
                     </div>
                 }
             }

@@ -1,6 +1,6 @@
 mod app;
-// mod timer;
-// mod pagination;
+mod views;
+mod components;
 use cfg_if::cfg_if;
 
 cfg_if! {
