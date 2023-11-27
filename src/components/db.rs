@@ -33,9 +33,9 @@ cfg_if! {
 }
 
 // Get all users (for testing purposes)
-/* #[server(GetUsers, "/api")]
-pub async fn get_users() -> Result<Vec<User>, ServerFnError> {
-    let req = use_context::<actix_web::HttpRequest>();
+#[server(GetUsers, "/api")]
+pub async fn get_users(cx: Scope, email: String, password: String) -> Result<User, ServerFnError> {
+    let req = use_context::<actix_web::HttpRequest>(cx);
 
     if let Some(req) = req {
         println!("Request: {:#?}", req);
@@ -45,14 +45,24 @@ pub async fn get_users() -> Result<Vec<User>, ServerFnError> {
     let mut conn = db().await?;
     let mut users = Vec::new();
 
-    let mut rows = sqlx::query_as::<_, User>("SELECT * FROM users").fetch(&mut conn);
-    while let Some(row) = rows.try_next().await? {
+    let mut rows =sqlx::query_as::<_, User>("
+        SELECT * FROM usuarios
+        WHERE email = $1 AND password = $2
+    ")
+    .bind(email)
+    .bind(password)
+    .fetch(&mut conn);
+    while let Some(row) = rows
+        .try_next()
+        .await
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
+    {
         users.push(row);
     }
 
-    Ok(users)
+    Ok(users[0].clone())
 
-} */
+}
 
 // Encode with Cbor
 #[server(AddUser, "/api", "Cbor")]
