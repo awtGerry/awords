@@ -1,7 +1,12 @@
 use leptos::*;
 
+use crate::components::db::new_user;
+
 #[allow(unused, non_snake_case)]
 pub fn Signup(cx: Scope) -> impl IntoView {
+    let email = create_rw_signal(cx, "".to_string());
+    let username = create_rw_signal(cx, "".to_string());
+    let password = create_rw_signal(cx, "".to_string());
     return view! {
         cx,
         <main class="bg-aw-bg h-screen w-full my-0 mx-auto text-center">
@@ -20,6 +25,7 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                             focus:ring-2
                             focus:ring-aw-green
                             focus:invalid:border-red-500  focus:invalid:ring-red-500"
+                            value={email}
                         />
                         <img src="/email.svg" class="absolute leading-none text-center h-full w-12 h-12 px-2 left-0 top-0 flex align-center items-center rounded-xl" />
                     </div>
@@ -33,6 +39,7 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                             focus:ring-2
                             focus:ring-aw-green
                             focus:invalid:border-red-500  focus:invalid:ring-red-500"
+                            value={username}
                         />
                         <img src="/user_login.svg" class="absolute leading-none text-center h-full w-12 h-12 px-2 left-0 top-0 flex align-center items-center rounded-xl" />
                     </div>
@@ -46,19 +53,29 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                             focus:ring-2
                             focus:ring-aw-green
                             focus:invalid:border-red-500
-                            focus:invalid:ring-red-500" />
+                            focus:invalid:ring-red-500"
+                            value={password}
+                        />
                         <img src="/lock.svg" class="absolute leading-none text-center h-full w-12 h-12 px-2 left-0 top-0 flex align-center items-center rounded-xl" />
                     </div>
                 </div>
                 <div class="my-2">
-                    <button class="bg-aw-green text-aw-bg font-mono font-bold text-normal mt-8 px-8 py-4 rounded-full text-center" type="submit">
+                    <button type="submit"
+                        class="bg-aw-green text-aw-bg font-mono font-bold text-normal mt-8 px-8 py-4 rounded-full text-center"
+                        on:click=move |_| {
+                            let new_user = new_user(email.get(), username.get(), password.get());
+                            email.set("".to_string());
+                            username.set("".to_string());
+                            password.set("".to_string());
+                        }
+                    >
                         "Create your account"
                     </button>
                 </div>
                 <div class="my-4">
                     <div class="text-aw-fg text-sm font-bold font-mono">
                         "Already have an account? "
-                        <a href="/signup" class="text-aw-green-light">
+                        <a href="/login" class="text-aw-green-light">
                             " Log in."
                         </a>
                     </div>

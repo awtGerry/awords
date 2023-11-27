@@ -1,6 +1,7 @@
 mod app;
 mod views;
 mod components;
+// use it for the server
 use cfg_if::cfg_if;
 
 cfg_if! {
@@ -8,6 +9,7 @@ cfg_if! {
         use actix_files::Files;
         use actix_web::*;
         use leptos::*;
+        use crate::components::db::*;
         use crate::app::*;
         use leptos_actix::{generate_route_list, LeptosRoutes};
 
@@ -18,6 +20,11 @@ cfg_if! {
 
         #[actix_web::main]
         async fn main() -> std::io::Result<()> {
+            let mut conn = db().await.expect("couldn't connect to DB");
+            sqlx::migrate!()
+                .run(&mut conn)
+                .await
+                .expect("could not run SQLx migrations");
 
             // Setting this to None means we'll be using cargo-leptos and its env vars.
             let conf = get_configuration(None).await.unwrap();
