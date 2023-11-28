@@ -19,8 +19,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
-      # - uses: jetli/trunk-action@v0.4.0
-      - uses: leptos-rs/cargo-leptos@v0.2.3
+      - uses: jetli/trunk-action@v0.4.0
       - name: Leptos Build
         run: |
           rustup target add wasm32-unknown-unknown
