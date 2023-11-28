@@ -26,15 +26,15 @@ cfg_if! {
                 .await
                 .expect("could not run SQLx migrations");
 
-            crate::components::db::register_server_functions();
+            // crate::components::db::register_server_functions();
 
             // Setting this to None means we'll be using cargo-leptos and its env vars.
             let conf = get_configuration(None).await.unwrap();
 
-            let addr = conf.leptos_options.site_address.clone();
+            let addr = conf.leptos_options.site_addr;
 
             // Generate the list of routes in your Leptos App
-            let routes = generate_route_list(|cx| view! { cx, <App/> });
+            let routes = generate_route_list(App);
 
             HttpServer::new(move || {
                 let leptos_options = &conf.leptos_options;
@@ -43,7 +43,7 @@ cfg_if! {
                 App::new()
                     .service(css)
                     .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
-                    .leptos_routes(leptos_options.to_owned(), routes.to_owned(), |cx| view! { cx, <App/> })
+                    .leptos_routes(leptos_options.to_owned(), routes.to_owned(), App)
                     .service(Files::new("/", &site_root))
                     .wrap(middleware::Compress::default())
             })

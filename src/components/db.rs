@@ -2,40 +2,32 @@ use cfg_if::cfg_if;
 use leptos::*;
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
+pub struct User {
+    id: i32,
+    email: String,
+    username: String,
+    password: String,
+}
+
 cfg_if! {
     if #[cfg(feature = "ssr")] {
         use sqlx::{Connection, SqliteConnection};
 
-        pub async fn db() -> Result<SqliteConnection, ServerFnError> {
+        /* pub async fn db() -> Result<SqliteConnection, ServerFnError> {
             Ok(SqliteConnection::connect("sqlite:Awords.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))?)
-        }
-
-        pub fn register_server_functions() {
-            _ = AddUser::register();
-        }
-
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow)]
-        pub struct User {
-            id: i32,
-            email: String,
-            username: String,
-            password: String,
-        }
-    } else {
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-        pub struct User {
-            id: i32,
-            email: String,
-            username: String,
-            password: String,
+        } */
+        pub async fn db() -> Result<SqliteConnection, ServerFnError> {
+            Ok(SqliteConnection::connect("sqlite:Awords.db").await?)
         }
     }
 }
 
 // Get all users (for testing purposes)
 #[server(GetUsers, "/api")]
-pub async fn get_users(cx: Scope, email: String, password: String) -> Result<User, ServerFnError> {
-    let req = use_context::<actix_web::HttpRequest>(cx);
+pub async fn get_users(email: String, password: String) -> Result<User, ServerFnError> {
+    let req = use_context::<actix_web::HttpRequest>();
 
     if let Some(req) = req {
         println!("Request: {:#?}", req);
@@ -43,25 +35,16 @@ pub async fn get_users(cx: Scope, email: String, password: String) -> Result<Use
     use futures::TryStreamExt;
 
     let mut conn = db().await?;
-    let mut users = Vec::new();
-
-    let mut rows =sqlx::query_as::<_, User>("
+    let user: User = sqlx::query_as::<_, User>("
         SELECT * FROM usuarios
         WHERE email = $1 AND password = $2
     ")
     .bind(email)
     .bind(password)
-    .fetch(&mut conn);
-    while let Some(row) = rows
-        .try_next()
-        .await
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
-    {
-        users.push(row);
-    }
+    .fetch_one(&mut conn)
+    .await?;
 
-    Ok(users[0].clone())
-
+    Ok(user)
 }
 
 // Encode with Cbor

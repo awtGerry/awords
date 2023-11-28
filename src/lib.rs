@@ -14,28 +14,7 @@ cfg_if! {
                 console_error_panic_hook::set_once();
                 _ = console_log::init_with_level(log::Level::Debug);
 
-                log!("hydrate mode - hydrating");
-
-                leptos::mount_to_body(|cx| {
-                    view! { cx,  <App/> }
-                });
+                leptos::mount_to_body(App);
         }
     }
-    else if #[cfg(feature = "csr")] {
-        use wasm_bindgen::prelude::wasm_bindgen;
-
-        #[wasm_bindgen(start)]
-        pub fn main() {
-            use app::*;
-            use leptos::*;
-            _ = console_log::init_with_level(log::Level::Debug);
-            console_error_panic_hook::set_once();
-
-            log!("csr mode - mounting to body");
-
-            mount_to_body(|cx| {
-                view! { cx, <App /> }
-            });
-        }
-  }
 }
