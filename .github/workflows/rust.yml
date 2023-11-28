@@ -61,14 +61,14 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
-      - uses: jetli/trunk-action@v0.4.0
-      # - uses: leptos-rs/cargo-leptos@nightly
+      # - uses: jetli/trunk-action@v0.4.0
+      - uses: leptos-rs/cargo-leptos@latest
       - name: Build
         run: |
           cargo build --verbose
           rustup target add wasm32-unknown-unknown
-          # cargo leptos build
-          trunk build
+          cargo leptos build
+          # trunk build
       - name: Preview Deploy
         id: deploy
         uses: amondnet/vercel-action@v20
