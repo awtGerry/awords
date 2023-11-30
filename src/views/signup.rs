@@ -67,6 +67,10 @@ pub fn Signup() -> impl IntoView {
                                 focus:ring-aw-green
                                 focus:invalid:border-red-500  focus:invalid:ring-red-500"
                                 name="username"
+                                on:input=move |ev| {
+                                    username.update(|c| *c = event_target_value(&ev));
+                                }
+                                prop:value=username
                             />
                             <svg class="absolute leading-none text-center h-full w-12 h-12 px-2 left-0 top-0 flex align-center items-center rounded-xl"
                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,6 +90,10 @@ pub fn Signup() -> impl IntoView {
                                 focus:invalid:border-red-500
                                 focus:invalid:ring-red-500"
                                 name="password"
+                                on:input=move |ev| {
+                                    password.update(|c| *c = event_target_value(&ev));
+                                }
+                                prop:value=password
                             />
                             <svg class="absolute leading-none text-center h-full w-12 h-12 px-2 left-0 top-0 flex align-center items-center rounded-xl"
                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"

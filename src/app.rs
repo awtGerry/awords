@@ -12,7 +12,7 @@ use crate::views::signup::Signup;
 pub fn App() -> impl IntoView {
     provide_meta_context();
     view! {
-        <Stylesheet id="leptos" href="/pkg/tailwind.css"/>
+        <Stylesheet id="leptos" href="/pkg/awords.css"/>
         <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"/>
         <Link rel="shortcut icon" type_="image/ico" href="/logo.ico"/>
         <Router>

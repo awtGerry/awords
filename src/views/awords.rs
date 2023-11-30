@@ -26,7 +26,7 @@ pub fn Awords() -> impl IntoView {
                     <h1 class="text-4xl font-pacifico text-aw-green mt-4">"AWORDS"</h1>
                 </div>
                 <div class="flex flex-row">
-                    <a href="#" class="text-aw-green-light text-2xl font-bold ml-64">
+                    <a href="#" class="text-aw-green text-2xl font-bold ml-64">
                         // <img src="/trophy.svg" class="mt-4 w-12 h-12"/>
                         <svg class="w-12 h-12 mt-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16.5 20.5H7.5" stroke="#C5EE4F" stroke-linecap="round"/>
