@@ -20,12 +20,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
       - uses: jetli/trunk-action@v0.4.0
-      - name: Leptos Build
+      - name: Trunk Build
         run: |
           rustup target add wasm32-unknown-unknown
           cargo install --locked cargo-leptos
-          cargo leptos build --release -vv
-          # trunk build
+          trunk build
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest

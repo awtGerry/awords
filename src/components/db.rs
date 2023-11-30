@@ -32,7 +32,7 @@ pub async fn get_users(email: String, password: String) -> Result<User, ServerFn
     if let Some(req) = req {
         println!("Request: {:#?}", req);
     }
-    use futures::TryStreamExt;
+    // use futures::TryStreamExt;
 
     let mut conn = db().await?;
     let user: User = sqlx::query_as::<_, User>("
